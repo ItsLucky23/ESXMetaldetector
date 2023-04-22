@@ -1,15 +1,26 @@
 Config = {}
 
-Config.ProspectingArea = vec3(919.2473, 3376.0227, 68.0150) -- the coords of the prospecting area
-Config.ProspectingAreaSize = 200.0 -- the size of the prospecting area
-Config.Locations = 100 -- the amount of locations there will be
-Config.difficultyModifier = 1.0 -- 1.0 is normal, the higher you go the harder you can find it. The lower you go the easer it gets(dont put it to high cause it can glitch)
 Config.SoundActive = true -- if true then there will be a sound indicating how close you are
 Config.ZoneActive = true -- if true then there will be a circle indicating how close you are
 Config.Language = 'en'
 Config.Blips = true -- if true then there will be a blip at the location
 Config.BlipArea = false -- if true then there will be a larger area around the main blip 
 Config.BlipText = 'Prospecting' -- if you have blips active then this will be there name
+
+Config['ProspectingArea'] = {
+    {
+        coords = vec3(919.2473, 3376.0227, 68.0150), -- the coords of the prospecting area
+        size = 200.0, -- the size of the prospecting area
+        locations = 100, -- the amount of locations there will be
+        difficultyModifier = 1.0 -- 1.0 is normal, the higher you go the harder you can find it. The lower you go the easer it gets(dont put it to high cause it can glitch)
+    },
+    {
+        coords = vec3(627.4949, 3395.0938, 87.2090),
+        size = 50.0,
+        locations = 100,
+        difficultyModifier = 0.5
+    },
+}
 
 Config['models'] = {
 
