@@ -1,13 +1,22 @@
 Citizen.CreateThread(function()
     
-    AddTextEntry("BLIP", Config.BlipText)
-    blip = AddBlipForCoord(Config.ProspectingArea)
-    SetBlipSprite(blip, 485)
-    SetBlipAsShortRange(blip, true)
-    BeginTextCommandSetBlipName("BLIP")
-    EndTextCommandSetBlipName(blip)
-    area_blip = AddBlipForRadius(Config.ProspectingArea, 100.0)
-    SetBlipSprite(area_blip, 10)
+    blip = {}
+    area_blip = {}
+
+    for i = 1, #Config['ProspectingArea'] do
+
+        local v = Config['ProspectingArea'][i]
+
+        AddTextEntry("BLIP", Config.BlipText)
+        blip[i] = AddBlipForCoord(v['coords'])
+        SetBlipSprite(blip[i], 485)
+        SetBlipAsShortRange(blip[i], true)
+        BeginTextCommandSetBlipName("BLIP")
+        EndTextCommandSetBlipName(blip[i])
+        area_blip[i] = AddBlipForRadius(v['coords'], v['size'] / 2)
+        SetBlipSprite(area_blip[i], 10)        
+
+    end
 
 end)
 
@@ -72,9 +81,27 @@ AddEventHandler('prospecting:check', function()
 
 	end
 
-	local dst = #(GetEntityCoords(ped).xy - Config.ProspectingArea.xy)
+    canProspect = false
 
-	if dst > Config.ProspectingAreaSize / 2 then
+    for i = 1, #Config['ProspectingArea'] do
+
+        local x = Config['ProspectingArea'][i]
+
+        local dst = #(GetEntityCoords(ped).xy - x['coords'].xy)
+
+        if dst <= Config['ProspectingArea'][i]['size'] / 2 then
+
+            v = x
+
+            canProspect = true
+            
+            break
+
+        end
+
+    end
+
+    if not canProspect then
 
         ShowNotification(Config['translation'][Config.Language]['cant_prospect'])
 
@@ -127,7 +154,7 @@ AddEventHandler('prospecting:check', function()
 
 				if targetCoords then
 
-					local dst = #((coords.xy - targetCoords.xy) * Config.difficultyModifier)
+					local dst = #((coords.xy - targetCoords.xy) * v['difficultyModifier'])
 
                     if dst < 3.0 then
 
@@ -489,26 +516,30 @@ end
 RegisterNetEvent('prospecting:generateTargets')
 AddEventHandler('prospecting:generateTargets', function()
 
-	for i = 1, Config.Locations do
+	for i = 1, v['locations'] do
 
-		if #targets >= Config.Locations then
+		if #targets >= v['locations'] then
 
 			return
 
 		end
 
-		x = math.random(0,(Config.ProspectingAreaSize * 2))
-		y = math.random(0,(Config.ProspectingAreaSize * 2))
+        Wait(1000)
+
+        print(v['size'])
+        
+		x = math.random(0,(v['size'] * 2))
+		y = math.random(0,(v['size'] * 2))
 
 		if x < 100 then
 
 			x = x - x - x -- makes the value neegative
 
-            x = x + Config.ProspectingArea.x
+            x = x + v['coords']['x']
 
 		else
 
-			x = x + Config.ProspectingArea.x - 100
+			x = x + v['coords']['x'] - 100
 
 		end
 
@@ -516,15 +547,15 @@ AddEventHandler('prospecting:generateTargets', function()
 
             y = y - y - y -- makes the value neegative
 
-            y = y + Config.ProspectingArea.y
+            y = y + v['coords']['y']
 
 		else
 
-			y = y + Config.ProspectingArea.y - 100
+			y = y + v['coords']['y'] - 100
 
 		end
 
-		asd, z = GetGroundZFor_3dCoord(x, y, Config.ProspectingArea.z, 1)
+		asd, z = GetGroundZFor_3dCoord(x, y, v['coords']['z'], 1)
 
 		table.insert(targets, {coords = vec3(x,y,z)})
 
