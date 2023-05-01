@@ -1,3 +1,5 @@
+local inventory = exports.ox_inventory
+
 ESX.RegisterUsableItem('metaldetector', function(source)
 
     local _source = source
@@ -11,27 +13,45 @@ AddEventHandler('prospecting:reward', function()
 
     local _source = source
 
-    local randomAmount = math.random(1, 100)
+    local randomAmount = math.random(1, 1000)
 
     local xPlayer = ESX.GetPlayerFromId(_source)
 
     for i = 1, #Config['rewards'] do
 
-        local randomAmount = randomAmount - Config['rewards'][i]['chance']
+        randomAmount = randomAmount - Config['rewards'][i]['chance'] * 10
 
-        if randomAmount <= 1 then
+        if randomAmount < 1 then
 
             if xPlayer then
 
-                if xPlayer.canCarryItem(Config['rewards'][i]['item'], Config['rewards'][i]['amount']) then
+                if Config.inventory == 'ox_inventory' then
 
-                    xPlayer.addInventoryItem(Config['rewards'][i]['item'], Config['rewards'][i]['amount'])
-                    randomAmount = 100
-                    break
+                    if inventory:CanCarryItem(_source, Config['rewards'][i]['item'], Config['rewards'][i]['amount']) then
+
+                        inventory:AddItem(_source, Config['rewards'][i]['item'], Config['rewards'][i]['amount'])
+
+                        return
+
+                    else
+
+                        xPlayer.showNotification(Config['translation'][Config.Language]['cant_carry'])
+
+                    end
 
                 else
 
-                    xPlayer.showNotification(Config['translation'][Config.Language]['cant_carry'])
+                    if xPlayer.canCarryItem(Config['rewards'][i]['item'], Config['rewards'][i]['amount']) then
+
+                        xPlayer.addInventoryItem(Config['rewards'][i]['item'], Config['rewards'][i]['amount'])
+                        
+                        return
+    
+                    else
+    
+                        xPlayer.showNotification(Config['translation'][Config.Language]['cant_carry'])
+    
+                    end
 
                 end
 
