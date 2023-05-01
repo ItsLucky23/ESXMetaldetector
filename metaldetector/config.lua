@@ -6,6 +6,7 @@ Config.Language = 'en'
 Config.Blips = true -- if true then there will be a blip at the location
 Config.BlipArea = false -- if true then there will be a larger area around the main blip 
 Config.BlipText = 'Prospecting' -- if you have blips active then this will be there name
+Config.inventory = 'ox_inventory' -- if the inventory u use is ox_inventory or menu_default
 
 Config['ProspectingArea'] = {
     {
